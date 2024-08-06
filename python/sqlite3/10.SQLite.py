@@ -15,6 +15,16 @@ class DBConnector():
     
     def desconectar(self, conn) -> None:
         conn.close()
+
+    def ejecutar_query(self, query):
+        """Como el cursor no se puede acceder cuando se cierra conexión habría que añadir aquí lógica para hacer fetchall o fetchone... para devolver lista iterable en Python"""
+        conn = self.conectar()
+        cur = conn.cursor()
+        resultado = cur.execute(query)
+        datos = resultado.fetchall()
+        conn.commit()
+        self.desconectar(conn)
+        return datos
     
     # create table
     def crear_tabla(self, query) -> None:
@@ -48,11 +58,12 @@ class DBConnector():
             self.desconectar(conn)
         else:
             select_all_query='''SELECT * from tblUsuarios;'''
-            conn = self.conectar()
-            cur = conn.cursor()
-            datos = cur.execute(select_all_query).fetchall()
-            conn.commit()
-            self.desconectar(conn)
+            #conn = self.conectar()
+            #cur = conn.cursor()
+            #datos = cur.execute(select_all_query).fetchall()
+            datos = self.ejecutar_query(select_all_query)
+            #conn.commit()
+            #self.desconectar(conn)
         return datos if datos else []
     
     # actualizar
@@ -107,24 +118,24 @@ if __name__ == '__main__':
     print("SELECT all:")
     print(datos)
 
-    datos = db_conn.select(1) # SELECT * from tblUsuarios WHERE idx = 1;
-    print("")
-    print("SELECT de id 1:")
-    print(datos)
+    # datos = db_conn.select(1) # SELECT * from tblUsuarios WHERE idx = 1;
+    # print("")
+    # print("SELECT de id 1:")
+    # print(datos)
 
-    datos = db_conn.select(99) # SELECT * from tblUsuarios WHERE idx = 1;
-    print("")
-    print("SELECT de id 99 sale vacío:")
-    print(datos)
+    # datos = db_conn.select(99) # SELECT * from tblUsuarios WHERE idx = 1;
+    # print("")
+    # print("SELECT de id 99 sale vacío:")
+    # print(datos)
 
-    datos = db_conn.update('saldo', 100, 1) 
-    print("")
-    print("UPDATE de saldo:")
-    datos = db_conn.select(1) # volvemos a hacer el SELECT para ver que funcionó
-    print(datos)
+    # datos = db_conn.update('saldo', 100, 1) 
+    # print("")
+    # print("UPDATE de saldo:")
+    # datos = db_conn.select(1) # volvemos a hacer el SELECT para ver que funcionó
+    # print(datos)
 
-    datos = db_conn.delete(2) 
-    print("")
-    print("DELETE de id 2:")
-    datos = db_conn.select() # hago SELECT de todo para ver que se ha borrado
-    print([dato[0] for dato in datos])
+    # datos = db_conn.delete(2) 
+    # print("")
+    # print("DELETE de id 2:")
+    # datos = db_conn.select() # hago SELECT de todo para ver que se ha borrado
+    # print([dato[0] for dato in datos])
