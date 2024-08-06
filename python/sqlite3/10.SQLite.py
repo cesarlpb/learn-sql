@@ -65,8 +65,13 @@ class DBConnector():
         self.desconectar(conn)
     
     # borrar por id
-    def delete(id):
-        pass
+    def delete(self, id):
+        delete_query='''DELETE FROM tblUsuarios WHERE idx = ?;'''
+        conn = self.conectar()
+        cur = conn.cursor()
+        cur.execute(delete_query, (id, ))
+        conn.commit()
+        self.desconectar(conn)
     
 
 if __name__ == '__main__':
@@ -117,3 +122,9 @@ if __name__ == '__main__':
     print("UPDATE de saldo:")
     datos = db_conn.select(1) # volvemos a hacer el SELECT para ver que funcionó
     print(datos)
+
+    datos = db_conn.delete(2) 
+    print("")
+    print("DELETE de id 2:")
+    datos = db_conn.select() # hago SELECT de todo para ver que se ha borrado
+    print([dato[0] for dato in datos])
