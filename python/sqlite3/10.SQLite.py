@@ -7,7 +7,7 @@ class DBConnector():
     # ruta a la db de sqlite
     def __init__(self, ruta_a_db: str) -> None:
         self.database = ruta_a_db
-        print("ruta a db:", self.database)
+        print("Usando base de datos:", self.database)
     
     def conectar(self):
         conn = sqlite3.connect(self.database)
@@ -37,8 +37,23 @@ class DBConnector():
     
     # leer datos
       # order by... 
-    def select(id):
-        pass
+    def select(self, id=None):
+        datos = []
+        if id:
+            select_all_query='''SELECT * from tblUsuarios WHERE idx = ?;'''
+            conn = self.conectar()
+            cur = conn.cursor()
+            datos = cur.execute(select_all_query, (id, )).fetchone()
+            conn.commit()
+            self.desconectar(conn)
+        else:
+            select_all_query='''SELECT * from tblUsuarios;'''
+            conn = self.conectar()
+            cur = conn.cursor()
+            datos = cur.execute(select_all_query).fetchall()
+            conn.commit()
+            self.desconectar(conn)
+        return datos if datos else []
     
     # actualizar
     def update(id):
@@ -76,3 +91,18 @@ if __name__ == '__main__':
     ]
     
     db_conn.seed(datos)
+
+    datos = db_conn.select() # SELECT * from tblUsuarios
+    print("")
+    print("SELECT all:")
+    print(datos)
+
+    datos = db_conn.select(1) # SELECT * from tblUsuarios WHERE idx = 1;
+    print("")
+    print("SELECT de id 1:")
+    print(datos)
+
+    datos = db_conn.select(99) # SELECT * from tblUsuarios WHERE idx = 1;
+    print("")
+    print("SELECT de id 99 sale vacío:")
+    print(datos)
