@@ -3,15 +3,26 @@
 import mysql.connector
 from mysql.connector import Error
 
+def leer_env():
+    """Se considera que el .env está en la misma carpeta"""
+    with open(".env") as f:
+        lineas = f.read().splitlines()
+    ENV={}
+    for linea in lineas:
+        key, value = linea.split('=')
+        ENV[key]=value
+    return ENV
+
 def connect_to_mysql():
     try:
+        ENV = leer_env()
         # Establece la conexión con MySQL
         connection = mysql.connector.connect(
-            host='localhost',
-            port=3306,
-            database='<nombre_de_db>',
-            user='<usuario_de_db>',
-            password='<password_supersafe>'
+            host=ENV['DB_HOST'],
+            port=ENV['DB_PORT'],
+            database=ENV['DB_NAME'],
+            user=ENV['DB_USER'],
+            password=ENV['DB_PASS']
         )
 
         if connection.is_connected():
