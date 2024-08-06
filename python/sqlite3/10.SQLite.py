@@ -56,8 +56,13 @@ class DBConnector():
         return datos if datos else []
     
     # actualizar
-    def update(id):
-        pass
+    def update(self, columna, valor, id):
+        update_query=f'''UPDATE tblUsuarios SET {columna} = ? WHERE idx = ?'''
+        conn = self.conectar()
+        cur = conn.cursor()
+        cur.execute(update_query, (valor, id, ))
+        conn.commit()
+        self.desconectar(conn)
     
     # borrar por id
     def delete(id):
@@ -105,4 +110,10 @@ if __name__ == '__main__':
     datos = db_conn.select(99) # SELECT * from tblUsuarios WHERE idx = 1;
     print("")
     print("SELECT de id 99 sale vacío:")
+    print(datos)
+
+    datos = db_conn.update('saldo', 100, 1) 
+    print("")
+    print("UPDATE de saldo:")
+    datos = db_conn.select(1) # volvemos a hacer el SELECT para ver que funcionó
     print(datos)
